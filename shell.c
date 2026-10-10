@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <unistd.h>
-#include <string.h>     /* strtok, strcmp, strcspn, strlen */
-#include <stdlib.h>     /* exit */
-#include <sys/wait.h>   /* wait, waitpid */
+#include <string.h>     
+#include <stdlib.h>    
+#include <sys/wait.h>   
 
-#define MAX_LINE 80 /* The maximum length command */
+#define MAX_LINE 80 
 
 /*
  * parse_input: splits `line` into words and stores them in args.
