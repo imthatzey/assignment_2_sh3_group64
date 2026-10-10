@@ -89,7 +89,7 @@ int main(void)
             exit(1);
         } else {
             if (background == 0) {
-                wait(NULL);
+                waitpid(pid, NULL, 0);
             }
         }
 
