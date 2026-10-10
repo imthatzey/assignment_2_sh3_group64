@@ -39,6 +39,10 @@ int main(void)
     char *args[MAX_LINE / 2 + 1];      /* command line arguments */
     int should_run = 1;                /* flag to determine when to exit program */
 
+    char history[5][MAX_LINE + 2];   /* the notebook, 5 lines */
+    int count = 0;                   /* total commands typed so far */
+    char original[MAX_LINE + 2];     /* photocopy of the typed line */
+
     while (should_run) {
         printf("osh>");
         fflush(stdout);
@@ -54,6 +58,8 @@ int main(void)
 
         if (strlen(line) == 0) { continue; }
 
+        strcpy(original, line); 
+
         int background = parse_input(line, args);
 
         if (args[0] == NULL) { continue; }
@@ -63,6 +69,16 @@ int main(void)
             continue;
         }
         
+        if (strcmp(args[0], "history") == 0) {
+            for (int n = count; n >= 1 && n > count - 5; n--) {
+                printf("%d %s\n", n, history[(n - 1) % 5]);
+            }
+            continue;
+        }
+
+        strcpy(history[count % 5], original);
+        count++;
+
         pid_t pid = fork();
 
         if (pid < 0) {
