@@ -9,9 +9,7 @@
 //global variable to check if there was an ampersand after a command
 int ampersand = 0;
 
-/*
-* parse_input: splits `line` into words and stores them in args.
-*/
+// parse_input: splits `line` into words and stores them in args.
 int parse_input (char *line, char *args[]){
     int i = 0;
     int background = 0;
@@ -30,10 +28,10 @@ int parse_input (char *line, char *args[]){
     
     const char delimiters[] = " \t\n";
     
-    // Get the first word (token)
+    // get the first word (token)
     char *word = strtok(line, delimiters);
     
-    // Continue gathering words until strtok returns NULL
+    // continue gathering words until strtok returns NULL
     while (word != NULL) {
         args[i] = word;
         i++;
@@ -45,13 +43,13 @@ int parse_input (char *line, char *args[]){
 }
 
 int main (void){
-    char line[MAX_LINE + 2];        /* +2: room for '\n' and '\0' */
-    char *args[MAX_LINE / 2 + 1];   /* command line arguments */
-    int should_run = 1;             /* flag to determine when to exit program */
+    char line[MAX_LINE + 2];        // +2: room for '\n' and '\0'
+    char *args[MAX_LINE / 2 + 1];   // command line arguments
+    int should_run = 1;             // flag to determine when to exit program
     
-    char history[5][MAX_LINE + 2];  /* the notebook, 5 lines */
-    int count = 0;                  /* total commands typed so far */
-    char original[MAX_LINE + 2];    /* photocopy of the typed line */
+    char history[5][MAX_LINE + 2];  // the notebook, 5 lines
+    int count = 0;                  // total commands typed so far
+    char original[MAX_LINE + 2];    // photocopy of the typed line
     
     while (should_run){
         printf("osh> ");
@@ -75,7 +73,8 @@ int main (void){
                 printf("No commands in history!\n");
                 continue;
             }
-            
+
+            // set both line and original to the previous command so that it can be run again
             strcpy(line, history[count-1]);
             strcpy(original, history[count-1]);
             printf("%s\n", original);
@@ -86,28 +85,32 @@ int main (void){
         int background = parse_input(line, args);       
         
         if (args[0] == NULL) {continue;}
-        
+
+        // if the user enters exit or Exit, the while loop should stop
         if ((strcmp(args[0], "exit") == 0) || (strcmp(args[0], "Exit") == 0)) {
             should_run = 0;
             continue;
         }
-        
+
+        // if the user enters history or History
         if ((strcmp(args[0], "history") == 0) || (strcmp(args[0], "History") == 0)){
             // let them know if there's no history to show
             if (count == 0){
                 printf("No history yet!\n");
             }
-            
+
+            // print out the last five commands
             for (int n = count; n >= 1 && n > count - 5; n--) {
                 printf("%d %s\n", n, history[(n - 1) % 5]);
             }
             continue;
         }
 
-        
+        // increase count and save the command the user entered
         strcpy(history[count % 5], original);
         count++;
-        
+
+        // fork and complete the command
         pid_t pid = fork();
         
         if (pid < 0){
@@ -117,13 +120,14 @@ int main (void){
             perror("osh");
             exit(1);
         } else {
-            if (ampersand == 0){ // only make the parent wait if there was no &
+            if (ampersand == 0){ // only make the parent wait for the child if there was no &
                 if (background == 0) {
                     waitpid(pid, NULL, 0);
                 }
             }
         }
     }
+    
     return 0;
 }
 
