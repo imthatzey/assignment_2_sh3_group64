@@ -10,3 +10,6 @@
 - `!!`: re-running the most recent command and printing it first
 - Messages for an empty history (`No commands in history!` for `!!`, `No history yet!` for `history`)
 - Accepting `Exit` and `History` as well as lowercase
+
+**AI Use**
+- We used Claude (Anthropic) for help with the input handling in `main`: reading the line with `fgets`, removing the trailing newline, and skipping empty lines.
